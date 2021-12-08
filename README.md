@@ -1,0 +1,1 @@
+CIDR classes summarization using [Perl Net::CIDR::Lite](https://metacpan.org/dist/Net-CIDR-Lite/view/Lite.pm) by [Random Thoughts](http://adrianpopagh.blogspot.com/2008/03/route-summarization-script.html)
