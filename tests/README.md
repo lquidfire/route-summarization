@@ -1,1 +1,3 @@
-cat tests/networks | ./aggregateCIDR.pl 
+```
+cat tests/networks | ./aggregateCIDR.pl
+```

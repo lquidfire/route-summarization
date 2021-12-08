@@ -1,36 +1,47 @@
 #!/usr/bin/perl
-# copied from http://adrianpopagh.blogspot.com/2008/03/route-summarization-script.html
+# based on original from http://adrianpopagh.blogspot.com/2008/03/route-summarization-script.html
 use strict;
 use warnings;
 use Net::CIDR::Lite;
+use Getopt::Long;
 
-my $ipv4String='[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}';
+GetOptions(
+    'verbose' => \my $verbose,
+    'quiet' => \my $quiet,
+    'help' => \my $help
+);
 
-if (defined $ARGV[0] && $ARGV[0] eq '-h') {
-    print "usage: $0\n\n";
-    print "This script summarizes your IP classes (if possible).\n";
-    print "Input IPs with mask one per line. End with CTRL+D.\n\n";
+if (defined $help) {
+    print "usage: $0\n";
+    print "\t-h|--help\tprint usage\n";
+    print "\t-q|--quiet\tsuppress outputs\n";
+    print "\nThis script summarizes your IP classes (if possible).\n";
+    print "Input IPv4s with CIDR mask one per line. End with CTRL+D.\n\n";
     print "Optionally, redirect a file to stdin like so:\n";
     print "$0 < cidr.txt \n";
     exit;
 }
 
 
-print "Enter IP/Mask one per line (1.2.3.0/24). End with CTRL+D.\n";
+if (!$quiet) { print "# Enter IP/Mask one per line (1.2.3.0/24). End with CTRL+D.\n"; }
 
 my $cidr =Net::CIDR::Lite->new;
 
 while (<>) {
-    if (/($ipv4String\/[0-9]{1,2})/) {
-        my $item=$1;
+    my $line = $_;
+    chomp $line;
+
+    if(  $line =~ m/^(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)\/(\d\d?)$/ &&
+                  ( $1 <= 255 && $2 <= 255 && $3 <= 255 && $4 <= 255 && $5 <=32) ) {
+        my $item=$line;
         $cidr->add($item);
     } else {
-        print "Ignoring previous line.\n";
+        if (!$quiet) { print "# Ignoring: $line\n"; }
     }
 }
 
 my @cidr_list = $cidr->list;
-print "======Aggregated IP list:======\n";
+print "# Aggregated IP list:\n";
 foreach my $item(@cidr_list){
     print "$item\n";
 }
