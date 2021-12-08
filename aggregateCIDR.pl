@@ -11,7 +11,7 @@ GetOptions(
     'help' => \my $help
 );
 
-if (defined $help) {
+if ($help) {
     print "usage: $0\n";
     print "\t-h|--help\tprint usage\n";
     print "\t-q|--quiet\tsuppress outputs\n";
@@ -21,7 +21,6 @@ if (defined $help) {
     print "$0 < cidr.txt \n";
     exit;
 }
-
 
 if (!$quiet) { print "# Enter IP/Mask one per line (1.2.3.0/24). End with CTRL+D.\n"; }
 
@@ -35,6 +34,7 @@ while (<>) {
                   ( $1 <= 255 && $2 <= 255 && $3 <= 255 && $4 <= 255 && $5 <=32) ) {
         my $item=$line;
         $cidr->add($item);
+
     } else {
         if (!$quiet) { print "# Ignoring: $line\n"; }
     }
