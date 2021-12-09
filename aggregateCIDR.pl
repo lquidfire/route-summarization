@@ -6,7 +6,6 @@ use Net::CIDR::Lite;
 use Getopt::Long;
 
 GetOptions(
-    'verbose' => \my $verbose,
     'quiet' => \my $quiet,
     'help' => \my $help
 );
