@@ -31,8 +31,7 @@ while (<>) {
 
     if(  $line =~ m/^(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)\/(\d\d?)$/ &&
                   ( $1 <= 255 && $2 <= 255 && $3 <= 255 && $4 <= 255 && $5 <=32) ) {
-        my $item=$line;
-        $cidr->add($item);
+        $cidr->add($line);
 
     } else {
         if (!$quiet) { print "# Ignoring: $line\n"; }
