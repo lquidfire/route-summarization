@@ -6,14 +6,16 @@ use Net::CIDR::Lite;
 use Getopt::Long;
 
 GetOptions(
+    'spf'   => \my $spf,
     'quiet' => \my $quiet,
-    'help' => \my $help
+    'help'  => \my $help
 );
 
 if ($help) {
     print "usage: $0\n";
     print "\t-h|--help\tprint usage\n";
     print "\t-q|--quiet\tsuppress outputs\n";
+    print "\t-s|--spf\tadd support for parsing spf prefixes\n";
     print "\nThis script summarizes your IP classes (if possible).\n";
     print "Input IPv4 or IPv6 with CIDR mask one per line. End with CTRL+D.\n\n";
     print "Optionally, redirect a file to stdin like so:\n";
@@ -29,6 +31,10 @@ my $cidr6 =Net::CIDR::Lite->new;
 while (<>) {
     my $line = $_;
     chomp $line;
+
+    if ($spf) {
+        $line =~ s/^ip[4,6]://;
+    }
 
     if( $line =~ m/^(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)\/(\d\d?)$/ &&
                   ( $1 <= 255 && $2 <= 255 && $3 <= 255 && $4 <= 255 && $5 <=32) ) {
@@ -52,5 +58,11 @@ while (<>) {
 my @cidr4_list = $cidr4->list;
 my @cidr6_list = $cidr6->list;
 print "# Aggregated IP list:\n";
-foreach my $item4(@cidr4_list){ print "$item4\n"; }
-foreach my $item6(@cidr6_list){ print "$item6\n"; }
+foreach my $item4(@cidr4_list){
+    if ($spf) { print "ip4:"; }
+    print "$item4\n";
+}
+foreach my $item6(@cidr6_list){
+    if ($spf) { print "ip6:"; }
+    print "$item6\n";
+}
