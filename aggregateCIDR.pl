@@ -15,7 +15,7 @@ if ($help) {
     print "\t-h|--help\tprint usage\n";
     print "\t-q|--quiet\tsuppress outputs\n";
     print "\nThis script summarizes your IP classes (if possible).\n";
-    print "Input IPv4s with CIDR mask one per line. End with CTRL+D.\n\n";
+    print "Input IPv4 or IPv6 with CIDR mask one per line. End with CTRL+D.\n\n";
     print "Optionally, redirect a file to stdin like so:\n";
     print "$0 < cidr.txt \n";
     exit;
@@ -23,27 +23,34 @@ if ($help) {
 
 if (!$quiet) { print "# Enter IP/Mask one per line (1.2.3.0/24). End with CTRL+D.\n"; }
 
-my $cidr =Net::CIDR::Lite->new;
+my $cidr4 =Net::CIDR::Lite->new;
+my $cidr6 =Net::CIDR::Lite->new;
 
 while (<>) {
     my $line = $_;
     chomp $line;
 
-    if(  $line =~ m/^(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)\/(\d\d?)$/ &&
+    if( $line =~ m/^(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)\/(\d\d?)$/ &&
                   ( $1 <= 255 && $2 <= 255 && $3 <= 255 && $4 <= 255 && $5 <=32) ) {
-        $cidr->add($line);
+        $cidr4->add_any($line);
 
-    } elsif(  $line =~ m/^(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)$/ &&
+    } elsif( $line =~ m/^(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)\.(\d\d?\d?)$/ &&
                   ( $1 <= 255 && $2 <= 255 && $3 <= 255 && $4 <= 255) ) {
-        $cidr->add("$line/32");
+        $cidr4->add("$line/32");
+
+    } elsif( $line =~ m/:/ ) {
+        eval {$cidr6->add_any($line)};
+        if ($@) {
+            if (!$quiet) { print "# Ignoring IPv6: $line\n"; }
+        }
 
     } else {
         if (!$quiet) { print "# Ignoring: $line\n"; }
     }
 }
 
-my @cidr_list = $cidr->list;
+my @cidr4_list = $cidr4->list;
+my @cidr6_list = $cidr6->list;
 print "# Aggregated IP list:\n";
-foreach my $item(@cidr_list){
-    print "$item\n";
-}
+foreach my $item4(@cidr4_list){ print "$item4\n"; }
+foreach my $item6(@cidr6_list){ print "$item6\n"; }
