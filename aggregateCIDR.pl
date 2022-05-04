@@ -57,7 +57,7 @@ while (<>) {
 
 my @cidr4_list = $cidr4->list;
 my @cidr6_list = $cidr6->list;
-print "# Aggregated IP list:\n";
+if (!$quiet) { print "# Aggregated IP list:\n"; }
 foreach my $item4(@cidr4_list){
     $item4 =~ s/\/32//;
     if ($spf) { print "ip4:"; }
