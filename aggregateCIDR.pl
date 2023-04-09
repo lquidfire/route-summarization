@@ -32,6 +32,8 @@ while (<>) {
     my $line = $_;
     chomp $line;
 
+    $line =~ s/^\s*(.*?)\s*$/$1/;
+
     if ($spf) {
         $line =~ s/^ip[4,6]://;
     }
