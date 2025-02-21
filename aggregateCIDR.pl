@@ -1,5 +1,7 @@
 #!/usr/bin/perl
+# Source: https://github.com/lquidfire/route-summarization
 # based on original from http://adrianpopagh.blogspot.com/2008/03/route-summarization-script.html
+
 use strict;
 use warnings;
 use Net::CIDR::Lite;
