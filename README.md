@@ -7,4 +7,4 @@ CIDR classes summarization using [Perl Net::CIDR::Lite](https://metacpan.org/dis
 
 Becase this uses STDIO, intergrating this Perl script into other workflows (i.e. BASH, TCL, etc) is minimal
 
-* [Postallow](https://github.com/lquidfire/postallow)
+* [Postallow](https://codeberg.org/peregrinus13/postallow)
